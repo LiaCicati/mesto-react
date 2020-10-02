@@ -31,7 +31,7 @@ React.useEffect(() => {
             alt="Изображение пользователя"
           />
           <button
-            className="profile__avatar-edit popup_opened"
+            className="profile__avatar-edit"
             onClick={onEditAvatar}
           ></button>
         </div>

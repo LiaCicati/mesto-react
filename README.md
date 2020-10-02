@@ -6,10 +6,9 @@
 
 ## Технологии:
 
-- ### HTML
-- ### CSS
-- ### JavaScript
 - ### React
+- ### JSX
+- ### API
 
 ---
 
