@@ -21,7 +21,7 @@ function App() {
     setAddCard(true);
   }
 
-  const [selectedCard, setSelectedCard] = React.useState("");
+  const [selectedCard, setSelectedCard] = React.useState(undefined);
   function handleCardClick(card) {
     setSelectedCard(card);
   }
@@ -30,7 +30,7 @@ function App() {
     setEditProfile(false);
     setEditAvatar(false);
     setAddCard(false);
-    handleCardClick("");
+    handleCardClick(undefined);
   }
 
   return (
@@ -49,9 +49,7 @@ function App() {
           name="edit"
           title="Редактировать профиль"
           isOpen={isEditProfileModalOpen}
-          onClose={closeAllModals}
-          children={
-            <>
+          onClose={closeAllModals}>
               <label className="modal__input">
                 <input
                   id="name-input"
@@ -94,17 +92,15 @@ function App() {
               >
                 Сохранить
               </button>
-            </>
-          }
+</ModalWithForm>
+          
         />
 
         <ModalWithForm
           name="add"
           title="Новое место"
           isOpen={isAddPlaceModalOpen}
-          onClose={closeAllModals}
-          children={
-            <>
+          onClose={closeAllModals}>
               <label className="modal__input">
                 <input
                   id="title-input"
@@ -144,33 +140,25 @@ function App() {
               >
                 Создать
               </button>
-            </>
-          }
-        />
+              </ModalWithForm>
 
         <ModalWithForm
           name="delete"
           title="Вы уверены?"
-          onClose={closeAllModals}
-          children={
-            <>
+          onClose={closeAllModals}>
               <button
                 className="modal__submit-button modal__submit-button_delete"
                 type="submit"
               >
                 Да
               </button>
-            </>
-          }
-        />
+              </ModalWithForm>
 
         <ModalWithForm
           name="avatar"
           title="Обновить аватар"
           isOpen={isEditAvatarModalOpen}
-          onClose={closeAllModals}
-          children={
-            <>
+          onClose={closeAllModals}>
               <label className="modal__input">
                 <input
                   id="link-input"
@@ -193,9 +181,7 @@ function App() {
               >
                 Сохранить
               </button>
-            </>
-          }
-        />
+              </ModalWithForm>
 
         <ModalImage card={selectedCard} onClose={closeAllModals} />
       </section>

@@ -4,8 +4,8 @@ function ModalImage({ card, onClose }) {
   return (
     <div className={`modal modal_image ${card && "modal_opened"}`}>
       <div className="modal__content">
-        <img className="modal__image" src={`${card.link}`} alt={card.name} />
-        <p className="modal__caption">{card.name}</p>
+        <img className="modal__image" src={card && card.link} alt={card && card.name}/>
+        <p className="modal__caption">{card && card.name}</p>
         <button
           className="modal__close-button"
           type="button"
