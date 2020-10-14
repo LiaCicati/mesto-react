@@ -2,11 +2,7 @@ import React from "react";
 
 function ModalWithForm(props) {
   return (
-    <div
-      className={`modal modal_${props.name} ${
-        props.isOpen ? "modal_opened" : ""
-      }`}
-    >
+    <div className={`modal modal_${props.name} ${props.isOpen ? "modal_opened" : ""}`}>
       <div className="modal__container">
         <button
           className="modal__close-button"
@@ -16,6 +12,7 @@ function ModalWithForm(props) {
         ></button>
         <h3 className="modal__title">{props.title}</h3>
         <form
+          onSubmit={props.onSubmit}
           className="modal__form"
           action="#"
           name={`${props.name}`}

@@ -2,10 +2,17 @@ import React from "react";
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
-import ModalWithForm from "./ModalWithForm";
 import ModalImage from "./ModalImage";
+import { api } from "../utils/Api";
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import EditProfileModal from "./EditProfileModal";
+import EditAvatarModal from "./EditAvatarModal";
+import AddPlaceModal from "./AddPlaceModal";
+import ModalWithDelete from "./ModalWithDelete";
 
 function App() {
+  const [isLoading, setIsLoading] = React.useState(false);
+
   const [isEditProfileModalOpen, setEditProfile] = React.useState(false);
   function handleEditProfileClick() {
     setEditProfile(true);
@@ -20,172 +27,202 @@ function App() {
   function handleAddPlaceClick() {
     setAddCard(true);
   }
+  const [deletedCard, setDeletedCard] = React.useState(null);
+  const [isModalWithDeleteOpen, setModalWithDelete] = React.useState(false);
+  function handleDeleteClick(card) {
+    setModalWithDelete(true);
+    setDeletedCard(card);
+  }
 
-  const [selectedCard, setSelectedCard] = React.useState(undefined);
+  const [selectedCard, setSelectedCard] = React.useState(null);
+  const [isModalImageOpen, setModalImage] = React.useState(false);
   function handleCardClick(card) {
     setSelectedCard(card);
+    setModalImage(true);
   }
 
   function closeAllModals() {
     setEditProfile(false);
     setEditAvatar(false);
     setAddCard(false);
-    handleCardClick(undefined);
+    setModalImage(false);
+    setModalWithDelete(false);
+    setSelectedCard(null);
+    setDeletedCard(null);
   }
 
+  const [currentUser, setCurrentUser] = React.useState({});
+  const [cards, setCards] = React.useState([]);
+
+  React.useEffect(() => {
+    Promise.all([api.getInitialCards(), api.getUserInfo()])
+      .then(([cards, userData]) => {
+        setCurrentUser(userData);
+        setCards(cards);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+  function handleCardLike(card) {
+    const isLiked = card.likes.some((i) => i._id === currentUser._id);
+    if (!isLiked) {
+      api
+        .likeCard(card._id)
+        .then((newCard) => {
+          const newCards = cards.map((c) => (c._id === card._id ? newCard : c));
+          setCards(newCards);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      api
+        .dislikeCard(card._id)
+        .then((newCard) => {
+          const newCards = cards.map((c) => (c._id === card._id ? newCard : c));
+          setCards(newCards);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }
+
+  function handleCardDelete() {
+    setIsLoading(true);
+    api
+      .deleteCard(deletedCard._id)
+      .then(() => {
+        const newCards = cards.filter((c) => c._id !== deletedCard._id);
+        setCards(newCards);
+        closeAllModals();
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }
+
+  function handleUpdateUser(items) {
+    setIsLoading(true);
+    api
+      .setUserInfo(items)
+      .then((res) => {
+        setCurrentUser(res);
+        closeAllModals();
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }
+
+  function handleUpdateAvatar(item) {
+    setIsLoading(true);
+    api
+      .setUserAvatar(item)
+      .then((res) => {
+        setCurrentUser(res);
+        closeAllModals();
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }
+
+  function handleAddPlaceSubmit(newCard) {
+    setIsLoading(true);
+    api
+      .postNewCard(newCard)
+      .then((newCard) => setCards([newCard, ...cards]))
+      .catch((err) => console.log(err))
+      .finally(() => {
+        setIsLoading(false);
+        closeAllModals();
+      });
+  }
+
+  function handlerEscClose(evt) {
+    if (evt.key === "Escape") {
+      closeAllModals();
+    }
+  }
+
+  function closeByOverlay(evt) {
+    if (evt.target.classList.contains("modal")) {
+      closeAllModals();
+    }
+  }
+
+  React.useEffect(() => {
+    document.addEventListener("keydown", handlerEscClose);
+    document.addEventListener("click", closeByOverlay);
+    return () => {
+      document.removeEventListener("keydown", handlerEscClose);
+      document.removeEventListener("click", closeByOverlay);
+    };
+  });
+
   return (
-    <div className="page">
-      <Header />
-      <Main
-        onEditAvatar={handleEditAvatarClick}
-        onEditProfile={handleEditProfileClick}
-        onAddPlace={handleAddPlaceClick}
-        onCardClick={handleCardClick}
-      />
-      <Footer />
-
-      <section className="modals">
-        <ModalWithForm
-          name="edit"
-          title="Редактировать профиль"
-          isOpen={isEditProfileModalOpen}
-          onClose={closeAllModals}>
-              <label className="modal__input">
-                <input
-                  id="name-input"
-                  className="modal__text modal__text_name"
-                  type="text"
-                  name="fullName"
-                  required
-                  placeholder="Введите имя"
-                  minLength="2"
-                  maxLength="40"
-                  autoComplete="off"
-                />
-                <span
-                  id="name-input-error"
-                  className="modal__input-error"
-                ></span>
-              </label>
-              <label className="modal__input">
-                <input
-                  id="job-input"
-                  className="modal__text modal__text_job"
-                  type="text"
-                  name="about"
-                  required
-                  placeholder="Введите описание"
-                  minLength="2"
-                  maxLength="200"
-                  autoComplete="off"
-                />
-                <span
-                  id="job-input-error"
-                  className="modal__input-error"
-                ></span>
-              </label>
-
-              <button
-                className="modal__submit-button"
-                type="submit"
-                aria-label="Save"
-              >
-                Сохранить
-              </button>
-</ModalWithForm>
-          
+    <CurrentUserContext.Provider value={currentUser}>
+      <div className="page">
+        <Header />
+        <Main
+          cards={cards}
+          onEditAvatar={handleEditAvatarClick}
+          onEditProfile={handleEditProfileClick}
+          onAddPlace={handleAddPlaceClick}
+          onCardClick={handleCardClick}
+          onCardLike={handleCardLike}
+          onCardDelete={handleDeleteClick}
         />
+        <Footer />
 
-        <ModalWithForm
-          name="add"
-          title="Новое место"
-          isOpen={isAddPlaceModalOpen}
-          onClose={closeAllModals}>
-              <label className="modal__input">
-                <input
-                  id="title-input"
-                  className="modal__text modal__text_place"
-                  type="text"
-                  name="title"
-                  required
-                  placeholder="Название"
-                  minLength="1"
-                  maxLength="30"
-                  autoComplete="off"
-                />
-                <span
-                  id="title-input-error"
-                  className="modal__input-error"
-                ></span>
-              </label>
-              <label className="modal__input">
-                <input
-                  id="link-input"
-                  className="modal__text modal__text_link"
-                  type="url"
-                  name="url"
-                  required
-                  placeholder="Cсылка на картинку"
-                  autoComplete="off"
-                />
-                <span
-                  id="link-input-error"
-                  className="modal__input-error"
-                ></span>
-              </label>
-              <button
-                className="modal__submit-button"
-                type="submit"
-                aria-label="Создать"
-              >
-                Создать
-              </button>
-              </ModalWithForm>
+        <section className="modals">
+          <EditProfileModal
+            isOpen={isEditProfileModalOpen}
+            isClose={closeAllModals}
+            onUpdateUser={handleUpdateUser}
+            isLoading={isLoading}
+          ></EditProfileModal>
 
-        <ModalWithForm
-          name="delete"
-          title="Вы уверены?"
-          onClose={closeAllModals}>
-              <button
-                className="modal__submit-button modal__submit-button_delete"
-                type="submit"
-              >
-                Да
-              </button>
-              </ModalWithForm>
+          <AddPlaceModal
+            isOpen={isAddPlaceModalOpen}
+            isClose={closeAllModals}
+            postNewCard={handleAddPlaceSubmit}
+            isLoading={isLoading}
+          ></AddPlaceModal>
 
-        <ModalWithForm
-          name="avatar"
-          title="Обновить аватар"
-          isOpen={isEditAvatarModalOpen}
-          onClose={closeAllModals}>
-              <label className="modal__input">
-                <input
-                  id="link-input"
-                  className="modal__text modal__text_link"
-                  type="url"
-                  name="url"
-                  required
-                  placeholder="Ссылка на картинку"
-                  autoComplete="off"
-                />
-                <span
-                  id="link-input-error"
-                  className="modal__input-error"
-                ></span>
-              </label>
-              <button
-                className="modal__submit-button"
-                type="submit"
-                aria-label="Save"
-              >
-                Сохранить
-              </button>
-              </ModalWithForm>
+          <EditAvatarModal
+            isOpen={isEditAvatarModalOpen}
+            isClose={closeAllModals}
+            onUpdateAvatar={handleUpdateAvatar}
+            isLoading={isLoading}
+          ></EditAvatarModal>
 
-        <ModalImage card={selectedCard} onClose={closeAllModals} />
-      </section>
-    </div>
+          <ModalWithDelete
+            isOpen={isModalWithDeleteOpen}
+            isClose={closeAllModals}
+            onDelete={handleCardDelete}
+            card={deletedCard}
+            isLoading={isLoading}
+          />
+
+          <ModalImage
+            isOpen={isModalImageOpen}
+            onClose={closeAllModals}
+            card={selectedCard}
+          />
+        </section>
+      </div>
+    </CurrentUserContext.Provider>
   );
 }
 
