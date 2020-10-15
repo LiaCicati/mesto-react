@@ -4,8 +4,8 @@ import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import HandlerSubmit from "./HandlerSubmit";
 
 function EditProfileModal(props) {
-  const [name, setName] = React.useState(undefined);
-  const [description, setDescription] = React.useState(undefined);
+  const [name, setName] = React.useState("");
+  const [description, setDescription] = React.useState("");
 
   const currentUser = React.useContext(CurrentUserContext);
 
