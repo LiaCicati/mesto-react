@@ -3,8 +3,8 @@ import ModalWithForm from "./ModalWithForm";
 import HandlerSubmit from "./HandlerSubmit";
 
 function AddPlaceModal(props) {
-  const [name, setNameCard] = React.useState(undefined);
-  const [link, setLinkCard] = React.useState(undefined);
+  const [name, setNameCard] = React.useState("");
+  const [link, setLinkCard] = React.useState("");
 
   function handleSubmitCard(e) {
     e.preventDefault();
