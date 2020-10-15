@@ -19,7 +19,6 @@ function EditAvatarModal(props) {
       isOpen={props.isOpen}
       onClose={props.isClose}
       onSubmit={handleSubmit}
-      isloading={props.isLoading}
     >
       <label className="modal__input">
         <input

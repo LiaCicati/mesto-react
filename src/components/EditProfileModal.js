@@ -34,7 +34,6 @@ function EditProfileModal(props) {
     <ModalWithForm
       name="edit"
       title="Редактировать профиль"
-      method="GET"
       isOpen={props.isOpen}
       onClose={props.isClose}
       onSubmit={handleSubmit}
