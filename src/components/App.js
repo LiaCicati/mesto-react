@@ -12,30 +12,33 @@ import ModalWithDelete from "./ModalWithDelete";
 
 function App() {
   const [isLoading, setIsLoading] = React.useState(false);
-
   const [isEditProfileModalOpen, setEditProfile] = React.useState(false);
+  const [isEditAvatarModalOpen, setEditAvatar] = React.useState(false);
+  const [isAddPlaceModalOpen, setAddCard] = React.useState(false);
+  const [deletedCard, setDeletedCard] = React.useState(null);
+  const [isModalWithDeleteOpen, setModalWithDelete] = React.useState(false);
+  const [selectedCard, setSelectedCard] = React.useState(null);
+  const [isModalImageOpen, setModalImage] = React.useState(false);
+  const [currentUser, setCurrentUser] = React.useState({});
+  const [cards, setCards] = React.useState([]);
+
   function handleEditProfileClick() {
     setEditProfile(true);
   }
 
-  const [isEditAvatarModalOpen, setEditAvatar] = React.useState(false);
   function handleEditAvatarClick() {
     setEditAvatar(true);
   }
 
-  const [isAddPlaceModalOpen, setAddCard] = React.useState(false);
   function handleAddPlaceClick() {
     setAddCard(true);
   }
-  const [deletedCard, setDeletedCard] = React.useState(null);
-  const [isModalWithDeleteOpen, setModalWithDelete] = React.useState(false);
+
   function handleDeleteClick(card) {
     setModalWithDelete(true);
     setDeletedCard(card);
   }
 
-  const [selectedCard, setSelectedCard] = React.useState(null);
-  const [isModalImageOpen, setModalImage] = React.useState(false);
   function handleCardClick(card) {
     setSelectedCard(card);
     setModalImage(true);
@@ -50,9 +53,6 @@ function App() {
     setSelectedCard(null);
     setDeletedCard(null);
   }
-
-  const [currentUser, setCurrentUser] = React.useState({});
-  const [cards, setCards] = React.useState([]);
 
   React.useEffect(() => {
     Promise.all([api.getInitialCards(), api.getUserInfo()])
