@@ -1,28 +1,21 @@
-# Проект : Mesto Russia
+# Project : Mesto Russia
 
-### Oписание:
+### Description:
 
-### Cервис где люди делятся фотографиями интересных мест
+### A service where people share photos of interesting places.
 
-## Технологии:
-
-- ### React
-- ### JSX
-- ### API
+This educational project depicts the implementation of the React library using the JSX syntax in the [ Mesto project ]( https://github.com/LiaCicati/mesto), implemented earlier in native JS.
 
 ---
 
-- ### Ссылка на сайт :
+- ### Link to the website :
   [ Mesto Russia ](https://liacicati.github.io/mesto-react/)
 
-- ### Планы по доработке :  
-- Сделать валидацию всех форм
+## Additional information:
 
-## Дополнительная информация:
+- ### _Source Code Editor_: Visual Studio Code
+- ### _Methodology used_: BEM Methodology
 
-- ### _Редактор исходного кода_: Visual Studio Code
-- ### _Используемая методология_: Методология БЭМ
-
-| Имя        | Email                |
+| Name       | Email                |
 | ---------- | -------------------- |
-| Чикати Лиа | LiaCicati@yandex.com |
+| Lia Cicati | liacicati@gmail.com  |
